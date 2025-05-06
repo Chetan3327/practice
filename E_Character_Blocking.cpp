@@ -9,6 +9,7 @@ using namespace std;
 typedef vector<ll> vll;
 typedef vector<vector<ll>> vvll;
 #define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
 template <typename T> void input(vector<T> &a){for(auto &e: a) cin >> e;}
 template <typename T> void input(vector<vector<T>> &a){for(auto &r: a) for(auto &c: r) cin >> c;}
 template <typename T> void print(T ans){cout<<ans<<"\n";}
@@ -24,14 +25,78 @@ ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a
 ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
+vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 void solve(){
-  ll n, k;
-  cin >> n >> k;
+  string a;
+  cin >> a;
 
-  k = min(k, 32LL);
-  ll p = pow(2LL, k);
-  ll ans = min(n + 1, p);
-  print(ans);
+  string b;
+  cin >> b;
+
+  ll n = a.size();
+
+  ll t, qc;
+  cin >> t >> qc;
+
+  ll c = 0;
+  for(int i = 0; i < n; i++) c += (a[i] != b[i]);
+
+  queue<pair<ll, ll>> q;
+  ll time = 0;
+  while(qc--){
+    time++;
+
+    // release blocks
+    while(!q.empty() && q.front().second <= time){
+      int idx = q.front().first;
+      q.pop();
+
+      c += (a[idx] != b[idx]);
+    }
+
+    ll type;
+    cin >> type;
+
+    if(type == 1){
+      ll idx;
+      cin >> idx;
+      idx--;
+      // block idx from both strings 
+
+      c -= (a[idx] != b[idx]);
+      q.push({idx, time + t});
+    }else if(type == 2){
+      ll s1, idx1, s2, idx2;
+      cin >> s1 >> idx1 >> s2 >> idx2;
+      idx1--;
+      idx2--;
+
+      c -= (a[idx1] != b[idx1]);
+      c -= (a[idx2] != b[idx2]);
+
+      if(s1 == s2){
+        if(s1 == 1){
+          swap(a[idx1], a[idx2]);
+        }else{
+          swap(b[idx1], b[idx2]);
+        }
+      }else{
+        if(s1 == 2){
+          swap(idx1, idx2);
+        }
+        swap(a[idx1], b[idx2]);
+      }
+
+      c += (a[idx1] != b[idx1]);
+      c += (a[idx2] != b[idx2]);
+    }else if(type == 3){
+      if(c == 0){
+        print("YES");
+      }else{
+        print("NO");
+      }
+    }
+  }
 }
 int main(){
   fastio

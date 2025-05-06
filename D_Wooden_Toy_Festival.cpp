@@ -9,6 +9,7 @@ using namespace std;
 typedef vector<ll> vll;
 typedef vector<vector<ll>> vvll;
 #define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
 template <typename T> void input(vector<T> &a){for(auto &e: a) cin >> e;}
 template <typename T> void input(vector<vector<T>> &a){for(auto &r: a) for(auto &c: r) cin >> c;}
 template <typename T> void print(T ans){cout<<ans<<"\n";}
@@ -24,13 +25,49 @@ ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a
 ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
-void solve(){
-  ll n, k;
-  cin >> n >> k;
+vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+bool check(ll mid, vll &a, ll n){
+  ll i = 0;
+  ll j = 0;
 
-  k = min(k, 32LL);
-  ll p = pow(2LL, k);
-  ll ans = min(n + 1, p);
+  while(j < n && (a[j] - a[i] + 1) / 2 <= mid){
+    j++;
+  }
+  i = j;
+  
+  while(j < n && (a[j] - a[i] + 1) / 2 <= mid){
+    j++;
+  }
+  i = j;
+
+  while(j < n && (a[j] - a[i] + 1) / 2 <= mid){
+    j++;
+  }
+  i = j;
+
+  return (j == n);
+}
+void solve(){
+  ll n;
+  cin >> n;
+
+  vll a(n);
+  input(a);
+  sort(all(a));
+
+  ll l = 0;
+  ll r = 1e9;
+  ll ans = 1e9;
+
+  while(l <= r){
+    ll mid = l + (r - l) / 2;
+    if(check(mid, a, n)){
+      ans = mid;
+      r = mid - 1;
+    }else{
+      l = mid + 1;
+    }
+  }
   print(ans);
 }
 int main(){
