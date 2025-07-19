@@ -9,6 +9,7 @@ using namespace std;
 typedef vector<ll> vll;
 typedef vector<vector<ll>> vvll;
 #define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
 template <typename T> void input(vector<T> &a){for(auto &e: a) cin >> e;}
 template <typename T> void input(vector<vector<T>> &a){for(auto &r: a) for(auto &c: r) cin >> c;}
 template <typename T> void print(T ans){cout<<ans<<"\n";}
@@ -24,33 +25,19 @@ ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a
 ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
+vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 void solve(){
-  ll a, b, r;
-  cin >> a >> b >> r;
+  ll n, m;
+  cin >> n >> m;
 
-  if(a < b) swap(a, b);
+  if(m % 2) m--;
+  m /= 2;
 
-  ll ans = 0;
-  bool msb = false;
-  for(int i = 63; i >= 0; i--){
-    if((a & (1LL << i)) > 0 && (b & (1LL << i)) == 0){
-      // set this bit
-
-      if(!msb){
-        msb = true;
-      }else{
-        if((ans | (1LL << i)) <= r){
-          ans |= (1LL << i);
-        }
-      }
-    }
-  }
-
-  print((ans ^ a) - (ans ^ b));
+  print(n * m);
 }
 int main(){
   fastio
-  testcases {
+  testcases{
     solve();
   }
 }
