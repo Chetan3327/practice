@@ -27,19 +27,27 @@ ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprim
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
 vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 void solve(){
-  ll n, k;
-  cin >> n >> k;
+  ll x, n;
+  cin >> x >> n;
 
-  string s(k, 'a');
-  for(int i = 0; i < k; i++) s[i] = (i + 'a');
+  ll ans = 1;
+  for(ll i = 1; i * i <= x; i++){
+    if(x % i == 0){
+      if(i >= n){
+        ans = max(ans, x / i);
+      }
 
-  string ans;
-  for(int i = 0; i < n; i++) ans += s;
+      ll j = x / i;
+      if(j >= n){
+        ans = max(ans, i);
+      }
+    }
+  }
   print(ans);
 }
 int main(){
   fastio
-  testcases {
+  testcases{
     solve();
   }
 }
