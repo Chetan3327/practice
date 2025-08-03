@@ -9,6 +9,7 @@ using namespace std;
 typedef vector<ll> vll;
 typedef vector<vector<ll>> vvll;
 #define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
 template <typename T> void input(vector<T> &a){for(auto &e: a) cin >> e;}
 template <typename T> void input(vector<vector<T>> &a){for(auto &r: a) for(auto &c: r) cin >> c;}
 template <typename T> void print(T ans){cout<<ans<<"\n";}
@@ -24,6 +25,7 @@ ll expo(ll a, ll b, ll mod) {ll res = 1; while (b > 0) {if (b & 1)res = (res * a
 ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
+vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 void solve(){
   ll n;
   cin >> n;
@@ -31,31 +33,46 @@ void solve(){
   string s;
   cin >> s;
 
-  vll idx;
+  stack<char> st1;
+  stack<char> st2;
+  vll ans(n);
+
   for(int i = 0; i < n; i++){
-    while(!idx.empty() && s[i] > s[idx.back()]){
-      idx.pop_back();
+    if(s[i] == '('){
+      if(!st2.empty() && st2.top() == ')'){
+        st2.pop();
+        ans[i] = 2;
+      }else{
+        st1.push('(');
+        ans[i] = 1;
+      }
+    }else{
+      if(!st1.empty() && st1.top() == '('){
+        st1.pop();
+        ans[i] = 1;
+      }else{
+        st2.push(')');
+        ans[i] = 2;
+      }
     }
-    idx.push_back(i);
   }
 
-  ll size = idx.size();
-  ll c = 0;
-  while(c < size && s[idx[0]] == s[idx[c]]) c++;
-
-  for(int i = 0; i < size / 2; i++){
-    swap(s[idx[i]], s[idx[size - i - 1]]);
-  }
-
-  if(is_sorted(all(s))){
-    print(size - c);
+  if(st1.empty() && st2.empty()){
+    set<ll> st(all(ans));
+    print(st.size());
+    if(st.size() == 1){
+      vll temp(n, 1);
+      print(temp);
+    }else{
+      print(ans);
+    }
   }else{
     print(-1);
   }
 }
 int main(){
   fastio
-  testcases {
+  testcases{
     solve();
   }
 }
