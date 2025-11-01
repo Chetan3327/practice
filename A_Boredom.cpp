@@ -26,43 +26,33 @@ ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
 vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-void dfs(ll node, vll &vis, const vvll adj){
-  vis[node] = 1;
-  for(auto itr: adj[node]){
-    if(!vis[itr]){
-      dfs(itr, vis, adj);
-    }
-  }
+map<ll, ll> freq;
+vll dp;
+ll dfs(ll idx, const vll &a, ll n){
+  if(idx >= n) return 0;
+  if(dp[idx] != -1) return dp[idx];
+
+  ll nextidx = upper_bound(a.begin(), a.end(), a[idx]) - a.begin();
+  ll nottake = dfs(nextidx, a, n);
+  
+  nextidx = upper_bound(a.begin(), a.end(), a[idx] + 1) - a.begin();
+  ll take = freq[a[idx]] * a[idx] + dfs(nextidx, a, n);
+
+  return dp[idx] = max(take, nottake);
 }
 void solve(){
-  ll n, m;
-  cin >> n >> m;
-  
-  vector<vector<vector<ll>>> adj(m + 1, vvll(n + 1));
-  for(int i = 0; i < m; i++){
-    ll u, v, c;
-    cin >> u >> v >> c;
-    adj[c][u].push_back(v);
-    adj[c][v].push_back(u);
-  }
-  
-  vll vis(n + 1, 0);
+  ll n;
+  cin >> n;
 
-  ll q;
-  cin >> q;
+  vll a(n);
+  input(a);
+  sort(all(a));
 
-  while(q--){
-    ll u, v;
-    cin >> u >> v;
+  for(auto &e: a) freq[e]++;
 
-    ll ans = 0;
-    for(int c = 1; c <= m; c++){
-      vis.assign(n + 1, 0);
-      dfs(u, vis, adj[c]);
-      if(vis[v]) ans++;
-    }
-    print(ans);
-  }
+  dp.resize(n + 1, -1);
+  ll ans = dfs(0, a, n);
+  print(ans);
 }
 int main(){
   fastio

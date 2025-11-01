@@ -26,45 +26,33 @@ ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
 vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-void dfs(ll node, vll &vis, const vvll adj){
-  vis[node] = 1;
-  for(auto itr: adj[node]){
-    if(!vis[itr]){
-      dfs(itr, vis, adj);
+bool prime(long long n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (long long i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
     }
-  }
+    return true;
 }
 void solve(){
-  ll n, m;
-  cin >> n >> m;
-  
-  vector<vector<vector<ll>>> adj(m + 1, vvll(n + 1));
-  for(int i = 0; i < m; i++){
-    ll u, v, c;
-    cin >> u >> v >> c;
-    adj[c][u].push_back(v);
-    adj[c][v].push_back(u);
-  }
-  
-  vll vis(n + 1, 0);
+  ll n;
+  cin >> n;
 
-  ll q;
-  cin >> q;
+  // 3 divisors => 1, x, n
+  // x == n / x => x^2 = n
 
-  while(q--){
-    ll u, v;
-    cin >> u >> v;
+  ll sq = sqrtl(n);
 
-    ll ans = 0;
-    for(int c = 1; c <= m; c++){
-      vis.assign(n + 1, 0);
-      dfs(u, vis, adj[c]);
-      if(vis[v]) ans++;
-    }
-    print(ans);
+  if(sq * sq == n && prime(sq)){
+    print("YES");
+  }else{
+    print("NO");
   }
 }
 int main(){
   fastio
-  solve();
+  testcases{
+    solve();
+  }
 }

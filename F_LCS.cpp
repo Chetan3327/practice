@@ -26,43 +26,46 @@ ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
 vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-void dfs(ll node, vll &vis, const vvll adj){
-  vis[node] = 1;
-  for(auto itr: adj[node]){
-    if(!vis[itr]){
-      dfs(itr, vis, adj);
-    }
-  }
-}
 void solve(){
-  ll n, m;
-  cin >> n >> m;
+  string a;
+  cin >> a;
   
-  vector<vector<vector<ll>>> adj(m + 1, vvll(n + 1));
-  for(int i = 0; i < m; i++){
-    ll u, v, c;
-    cin >> u >> v >> c;
-    adj[c][u].push_back(v);
-    adj[c][v].push_back(u);
-  }
-  
-  vll vis(n + 1, 0);
+  string b;
+  cin >> b;
 
-  ll q;
-  cin >> q;
+  ll n = a.size();
+  ll m = b.size();
 
-  while(q--){
-    ll u, v;
-    cin >> u >> v;
-
-    ll ans = 0;
-    for(int c = 1; c <= m; c++){
-      vis.assign(n + 1, 0);
-      dfs(u, vis, adj[c]);
-      if(vis[v]) ans++;
+  vvll dp(n + 1, vll(m + 1, 0));
+  for(int i = 1; i <= n; i++){
+    for(int j = 1; j <= m; j++){
+      if(a[i - 1] == b[j - 1]){
+        dp[i][j] = 1 + dp[i - 1][j - 1];
+      }else{
+        dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+      }
     }
-    print(ans);
   }
+
+  ll ans = dp[n][m];
+  ll i = n;
+  ll j = m;
+
+  string lcs;
+  while(i > 0 && j > 0){
+    if(a[i - 1] == b[j - 1]){
+      lcs += a[i - 1];
+      i--;
+      j--;
+    }else if(dp[i - 1][j] > dp[i][j - 1]){
+      i--;
+    }else{
+      j--;
+    }
+  }
+
+  reverse(all(lcs));
+  print(lcs);
 }
 int main(){
   fastio

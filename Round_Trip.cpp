@@ -26,43 +26,65 @@ ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
 vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-void dfs(ll node, vll &vis, const vvll adj){
+bool dfs(ll node, ll par, vvll &adj, vll &vis, vll &parent, vll &cycle){
   vis[node] = 1;
+  parent[node] = par;
+ 
   for(auto itr: adj[node]){
+    if(itr == par) continue;
     if(!vis[itr]){
-      dfs(itr, vis, adj);
+      if(!dfs(itr, node, adj, vis, parent, cycle)){
+        return false;
+      }
+    }else{
+      // cycle found;
+ 
+      cycle.clear();
+ 
+      ll curr = node;
+      while(curr != itr){
+        cycle.push_back(curr);
+        curr = parent[curr];
+      }
+ 
+      cycle.push_back(itr);
+      cycle.push_back(node);
+ 
+      return false;
     }
   }
+ 
+  return true;
 }
 void solve(){
   ll n, m;
   cin >> n >> m;
-  
-  vector<vector<vector<ll>>> adj(m + 1, vvll(n + 1));
-  for(int i = 0; i < m; i++){
-    ll u, v, c;
-    cin >> u >> v >> c;
-    adj[c][u].push_back(v);
-    adj[c][v].push_back(u);
-  }
-  
-  vll vis(n + 1, 0);
-
-  ll q;
-  cin >> q;
-
-  while(q--){
+ 
+  vvll adj(n + 1);
+  while(m--){
     ll u, v;
     cin >> u >> v;
-
-    ll ans = 0;
-    for(int c = 1; c <= m; c++){
-      vis.assign(n + 1, 0);
-      dfs(u, vis, adj[c]);
-      if(vis[v]) ans++;
-    }
-    print(ans);
+    
+    adj[u].push_back(v);
+    adj[v].push_back(u);
   }
+ 
+  vll vis(n + 1, 0);
+  vll parent(n + 1, -1);
+  vll cycle;
+ 
+  for(int i = 1; i <= n; i++){
+    if(!vis[i]){
+      cycle.clear();
+      if(!dfs(i, -1, adj, vis, parent, cycle)){
+        print(cycle.size());
+        print(cycle);
+        return ;
+      }
+    }
+  }
+ 
+  print("IMPOSSIBLE");
 }
 int main(){
   fastio

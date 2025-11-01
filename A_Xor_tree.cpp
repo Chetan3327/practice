@@ -13,7 +13,7 @@ typedef vector<vector<ll>> vvll;
 template <typename T> void input(vector<T> &a){for(auto &e: a) cin >> e;}
 template <typename T> void input(vector<vector<T>> &a){for(auto &r: a) for(auto &c: r) cin >> c;}
 template <typename T> void print(T ans){cout<<ans<<"\n";}
-template <typename T> void print(vector <T> &ans){for(auto &i : ans) cout<<i<<" "; cout<<"\n";}
+template <typename T> void print(vector <T> &ans){for(auto &i : ans) cout<<i<<"\n"; cout<<"\n";}
 template <typename T> void print(vector <vector<T>> &ans){for(auto &i : ans) {{for(auto &j: i) cout<<j<<" ";} cout<<"\n";}}
 #define MOD 1000000007
 ll floor(ll a, ll b) {ll c = a / b; if (a % b != 0 && ((a < 0 && b > 0) || (a > 0 && b < 0))) c--; return c;}
@@ -26,43 +26,63 @@ ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
 vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-void dfs(ll node, vll &vis, const vvll adj){
-  vis[node] = 1;
-  for(auto itr: adj[node]){
-    if(!vis[itr]){
-      dfs(itr, vis, adj);
-    }
-  }
-}
 void solve(){
-  ll n, m;
-  cin >> n >> m;
-  
-  vector<vector<vector<ll>>> adj(m + 1, vvll(n + 1));
-  for(int i = 0; i < m; i++){
-    ll u, v, c;
-    cin >> u >> v >> c;
-    adj[c][u].push_back(v);
-    adj[c][v].push_back(u);
-  }
-  
-  vll vis(n + 1, 0);
+  ll n;
+  cin >> n;
 
-  ll q;
-  cin >> q;
-
-  while(q--){
+  vvll adj(n);
+  for(int i = 0; i < n - 1; i++){
     ll u, v;
     cin >> u >> v;
+    u--;
+    v--;
 
-    ll ans = 0;
-    for(int c = 1; c <= m; c++){
-      vis.assign(n + 1, 0);
-      dfs(u, vis, adj[c]);
-      if(vis[v]) ans++;
-    }
-    print(ans);
+    adj[u].push_back(v);
+    adj[v].push_back(u);
   }
+
+  vll init(n);
+  input(init);
+
+  vll goal(n);
+  input(goal);
+
+  queue<vector<ll>> q;
+  q.push({0, 0, 0}); // {node, flips on curr, flips on below}
+
+  vll vis(n, 0);
+  vis[0] = 1;
+
+  vll ans;
+
+  while(!q.empty()){
+    ll size = q.size();
+    for(int i = 0; i < size; i++){
+      ll node = q.front()[0];
+      ll currflips = q.front()[1];
+      ll nextflips = q.front()[2];
+      q.pop();
+  
+      ll currvalue = init[node];
+      if(currflips) currvalue = 1 - currvalue;
+  
+      if(currvalue != goal[node]){
+        ans.push_back(node + 1);
+        currflips = 1 - currflips;
+        nextflips = 1 - nextflips;
+      }
+  
+      for(auto itr: adj[node]){
+        if(!vis[itr]){
+          q.push({itr, nextflips, currflips});
+          vis[itr] = 1;
+        }
+      }
+    }
+  }
+
+  print(ans.size());
+  print(ans);
 }
 int main(){
   fastio
