@@ -26,35 +26,40 @@ ll mminvprime(ll a, ll b) {return expo(a, b - 2, b);}
 ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m;}
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
 vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+const ll N = 1e8;
 void solve(){
-  ll n, m;
-  cin >> n >> m;
-  
-  vll mp(n + 1, 0);
+  ll n;
+  cin >> n;
 
-  for(ll i = n; i > 0; i--){
-    ll c = n / i;
-    ll d = c * (c - 1) / 2;
+  vll a(n);
+  input(a);
 
-    mp[i] = d;
-    for(ll j = 2 * i; j <= n; j += i){
-      mp[i] -= mp[j];
+  set<ll> st;
+  set<ll> curr;
+
+  for(int i = 0; i < n; i++){
+    set<ll> next;
+    if(a[i] < N){
+      next.insert(a[i]);
+      st.insert(a[i]);
     }
+
+    for(auto &itr: curr){
+      ll lcmm = lcm(itr, a[i]);
+      if(lcmm < N){
+        next.insert(lcmm);
+        st.insert(lcmm);
+      }
+    }
+
+    curr = next;
   }
 
-  ll ans = 0;
-
-  for(ll i = n; i >= 2; i--){
-    ll c = min(m / (i - 1), mp[i] / (i - 1));
-    m -= 1LL * c * (i - 1);
-    ans += 1LL * c * i;
+  ll ans = 1;
+  while(st.count(ans)){
+    ans++;
   }
-
-  if(m == 0){
-    print(ans);
-  }else{
-    print(-1);
-  }
+  print(ans);
 }
 int main(){
   fastio

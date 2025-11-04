@@ -30,31 +30,32 @@ void solve(){
   ll n, m;
   cin >> n >> m;
   
-  vll mp(n + 1, 0);
+  ll maxl = 0;
+  ll minr = LLONG_MAX;
 
-  for(ll i = n; i > 0; i--){
-    ll c = n / i;
-    ll d = c * (c - 1) / 2;
+  ll maxlen = 0;
+  ll minlen = LLONG_MAX;
 
-    mp[i] = d;
-    for(ll j = 2 * i; j <= n; j += i){
-      mp[i] -= mp[j];
-    }
+  vector<pair<ll, ll>> a(n);
+  for(int i = 0; i < n; i++){
+    cin >> a[i].first >> a[i].second;
+    maxl = max(maxl, a[i].first);
+    minr = min(minr, a[i].second);
+
+    maxlen = max(maxlen, a[i].second - a[i].first + 1);
+    minlen = min(minlen, a[i].second - a[i].first + 1);
   }
 
-  ll ans = 0;
+  ll ans = maxlen - minlen;
+  for(int i = 0; i < n; i++){
+    ll l = a[i].first;
+    ll r = a[i].second;
 
-  for(ll i = n; i >= 2; i--){
-    ll c = min(m / (i - 1), mp[i] / (i - 1));
-    m -= 1LL * c * (i - 1);
-    ans += 1LL * c * i;
+    ll curr = max(maxl - l, r - minr);
+    curr = min(curr, r - l + 1);
+    ans = max(ans, curr);
   }
-
-  if(m == 0){
-    print(ans);
-  }else{
-    print(-1);
-  }
+  print(2 * ans);
 }
 int main(){
   fastio

@@ -29,31 +29,22 @@ vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 void solve(){
   ll n, m;
   cin >> n >> m;
-  
-  vll mp(n + 1, 0);
 
-  for(ll i = n; i > 0; i--){
-    ll c = n / i;
-    ll d = c * (c - 1) / 2;
+  vll a(n);
+  input(a);
 
-    mp[i] = d;
-    for(ll j = 2 * i; j <= n; j += i){
-      mp[i] -= mp[j];
-    }
-  }
+  vll b(m);
+  input(b);
 
-  ll ans = 0;
+  ll suma = accumulate(all(a), 0LL);
+  ll sumb = accumulate(all(b), 0LL);
 
-  for(ll i = n; i >= 2; i--){
-    ll c = min(m / (i - 1), mp[i] / (i - 1));
-    m -= 1LL * c * (i - 1);
-    ans += 1LL * c * i;
-  }
-
-  if(m == 0){
-    print(ans);
+  if(suma == sumb){
+    print("Draw");
+  }else if(suma > sumb){
+    print("Tsondu");
   }else{
-    print(-1);
+    print("Tenzing");
   }
 }
 int main(){

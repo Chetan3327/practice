@@ -30,35 +30,66 @@ void solve(){
   ll n, m;
   cin >> n >> m;
   
-  vll mp(n + 1, 0);
+  vvll adj(n + 1);
+  vvll radj(n + 1);
+  for(int i = 0; i < m; i++){
+    ll u, v;
+    cin >> u >> v;
+    adj[u].push_back(v);
+    radj[v].push_back(u);
+  }
 
-  for(ll i = n; i > 0; i--){
-    ll c = n / i;
-    ll d = c * (c - 1) / 2;
+  stack<ll> st;
+  vll vis(n + 1);
 
-    mp[i] = d;
-    for(ll j = 2 * i; j <= n; j += i){
-      mp[i] -= mp[j];
+  function<void(ll)> dfs = [&](ll node){
+    vis[node] = 1;
+
+    for(auto itr: adj[node]){
+      if(!vis[itr]){
+        dfs(itr);
+      }
+    }
+
+    st.push(node);
+  };
+
+  for(int i = 1; i <= n; i++){
+    if(!vis[i]) dfs(i);
+  }
+
+  vis.assign(n + 1, 0);
+  vll ans(n + 1, 0);
+  ll c = 0;
+
+  function<void(ll, ll c)> dfs2 = [&](ll node, ll c){
+    vis[node] = 1;
+    ans[node] = c;
+
+    for(auto itr: radj[node]){
+      if(!vis[itr]){
+        dfs2(itr, c);
+      }
+    }
+  };
+
+  while(!st.empty()){
+    ll node = st.top();
+    st.pop();
+
+    if(!vis[node]){
+      c++;
+      dfs2(node, c);
     }
   }
 
-  ll ans = 0;
-
-  for(ll i = n; i >= 2; i--){
-    ll c = min(m / (i - 1), mp[i] / (i - 1));
-    m -= 1LL * c * (i - 1);
-    ans += 1LL * c * i;
+  print(c);
+  for(int i = 1; i <= n; i++){
+    cout << ans[i] << sp;
   }
-
-  if(m == 0){
-    print(ans);
-  }else{
-    print(-1);
-  }
+  cout << endl;
 }
 int main(){
   fastio
-  testcases{
-    solve();
-  }
+  solve();
 }

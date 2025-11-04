@@ -27,34 +27,25 @@ ll mod_div(ll a, ll b, ll m) {a = a % m; b = b % m; return (mod_mul(a, mminvprim
 ll ceil_div(ll a, ll b) {return a / b + ((a ^ b) > 0 && a % b != 0);}
 vector<pair<ll, ll>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 void solve(){
-  ll n, m;
-  cin >> n >> m;
+  ll n;
+  cin >> n;
+
+  vll a(n);
+  input(a);
   
-  vll mp(n + 1, 0);
-
-  for(ll i = n; i > 0; i--){
-    ll c = n / i;
-    ll d = c * (c - 1) / 2;
-
-    mp[i] = d;
-    for(ll j = 2 * i; j <= n; j += i){
-      mp[i] -= mp[j];
-    }
-  }
-
   ll ans = 0;
-
-  for(ll i = n; i >= 2; i--){
-    ll c = min(m / (i - 1), mp[i] / (i - 1));
-    m -= 1LL * c * (i - 1);
-    ans += 1LL * c * i;
+  for(int i = 0; i < n - 1; i++){
+    ans += abs(a[i] - a[i + 1]);
   }
 
-  if(m == 0){
-    print(ans);
-  }else{
-    print(-1);
+  ll maxsave = 0;
+  for(int i = 1; i < n - 1; i++){
+    maxsave = max(maxsave, abs(a[i] - a[i - 1]) + abs(a[i] - a[i + 1]) - abs(a[i + 1] - a[i - 1]));
   }
+  maxsave = max(maxsave, abs(a[0] - a[1]));
+  maxsave = max(maxsave, abs(a[n - 2] - a[n - 1]));
+
+  print(ans - maxsave);
 }
 int main(){
   fastio
